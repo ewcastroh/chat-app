@@ -14,6 +14,7 @@ export class ChatComponent implements OnInit {
 	connected = false;
 	message: Message = new Message();
 	messages: Message[] = [];
+	typing: string;
 
 	constructor() { }
 
@@ -39,6 +40,12 @@ export class ChatComponent implements OnInit {
 				this.messages.push(message);
 				console.log('Received message: ' + JSON.stringify(message));
 			});
+
+			this.client.subscribe('/chat/typing', e => {
+				this.typing = e.body;
+				setTimeout(() => this.typing = '', 3000);
+			});
+
 			this.message.type = 'NEW_USER';
 			this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message) });
 		};
@@ -63,4 +70,7 @@ export class ChatComponent implements OnInit {
 		this.message.text = '';
 	}
 
+	typingEvent(): void {
+		this.client.publish({ destination: '/app/typing', body: JSON.stringify(this.message.username) });
+	}
 }
