@@ -3,7 +3,10 @@
 	<div class="card-header">
 		<ul class="nav nav-pills card-header-pills">
 			<li class="nav-item mr-2">
-				<button class="btn btn-success" type="button" (click)="connect()" *ngIf="!connected">Connect</button>
+				<input [(ngModel)]="message.username" name="username" type="text" *ngIf="!connected" class="form-control" placeholder="Your username...">
+			</li>
+			<li class="nav-item mr-2">
+				<button class="btn btn-success" type="button" (click)="connect()" *ngIf="!connected" [disabled]="!message.username">Connect</button>
 			</li>
 			<li class="nav-item">
 				<button class="btn btn-warning" type="button" (click)="disconnect()" *ngIf="connected">Close chat</button>
@@ -14,7 +17,12 @@
 	<div class="card-body" style="overflow-y: scroll; height: 360px;" *ngIf="connected">
 		<ul class="list-group list-group-flush">
 			<li class="list-group-item list-group-item-light" *ngFor="let message of messages">
-				{{message.date | date:'shortTime'}}: {{ message.text }}
+				<span *ngIf="message.type == 'NEW_USER'">
+					[{{message.date | date:'shortTime'}}] {{ message.text }} @ <span [ngStyle]="{'color': message.color}">{{message.username}}</span>
+				</span>
+				<span *ngIf="message.type == 'MESSAGE'">
+					[{{message.date | date:'shortTime'}}] <span [ngStyle]="{'color': message.color}">{{message.username}}</span> says:<br> {{ message.text }}
+				</span>
 			</li>
 		</ul>
 	</div>
